@@ -2,4 +2,4 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/maliyatr/reactionlabgames/
-    - /bin/cp -r $REPOSITORY_ROOT/. $DEPLOYPATH
+    - echo $REPOSITORY_ROOT > $DEPLOYPATH/debug.txt
