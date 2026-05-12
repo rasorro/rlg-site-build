@@ -2,4 +2,4 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/maliyatr/reactionlabgames/
-    - echo "PWD=$PWD DEPLOYPATH=$DEPLOYPATH" > $DEPLOYPATH/debug.txt
+    - /bin/cp -r . $DEPLOYPATH
