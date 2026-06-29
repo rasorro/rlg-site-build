@@ -1,5 +1,0 @@
-User-Agent: *
-Allow: /
-
-Host: https://reactionlabgames.com
-Sitemap: https://reactionlabgames.com/sitemap.xml
