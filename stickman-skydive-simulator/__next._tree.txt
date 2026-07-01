@@ -1,3 +1,3 @@
-:HL["/_next/static/chunks/0cymjc2azt7m_.css","style"]
+:HL["/_next/static/chunks/0p03va-1zfjpr.css","style"]
 :HL["/_next/static/media/c34e38e2353f4ade-s.p.11923~f0b_iqo.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"stickman-skydive-simulator","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"X5zwwFvf-wK5A3e8FSDiD"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"stickman-skydive-simulator","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"Rk4G9qpxrVQtDPAZIY7xZ"}
