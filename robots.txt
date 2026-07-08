@@ -5,5 +5,5 @@ Disallow: /optimized_assets/
 Disallow: /original_assets/
 Disallow: /api/
 
-Host: https://reactionlabgames.com
-Sitemap: https://reactionlabgames.com/sitemap.xml
+Host: https://www.reactionlabgames.com
+Sitemap: https://www.reactionlabgames.com/sitemap.xml
