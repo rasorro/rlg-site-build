@@ -1,0 +1,9 @@
+User-Agent: *
+Allow: /
+Disallow: /*.html$
+Disallow: /optimized_assets/
+Disallow: /original_assets/
+Disallow: /api/
+
+Host: https://www.reactionlabgames.com
+Sitemap: https://www.reactionlabgames.com/sitemap.xml

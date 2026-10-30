@@ -1,0 +1,93 @@
+RewriteEngine On
+Options -Indexes
+
+# Canonical redirects: force https + www and clean URLs.
+RewriteCond %{HTTP_HOST} !^www\.reactionlabgames\.com$ [NC,OR]
+RewriteCond %{HTTPS} !=on
+RewriteRule ^ https://www.reactionlabgames.com%{REQUEST_URI} [R=301,L]
+
+RewriteCond %{THE_REQUEST} \s/+index\.html[\s?] [NC]
+RewriteRule ^index\.html$ / [R=301,L]
+
+RewriteCond %{THE_REQUEST} \s/+(.+?)\.html[\s?] [NC]
+RewriteRule ^ %1 [R=301,L]
+
+# For exported directory routes, prefer canonical trailing slash when a real directory exists.
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteCond %{REQUEST_URI} !/$
+RewriteRule ^(.+)$ /$1/ [R=301,L]
+
+# Serve pre-compressed Unity .br variants when browser supports brotli (smaller than gzip).
+RewriteCond %{HTTP:Accept-Encoding} br
+RewriteCond %{REQUEST_URI} \.(data|framework\.js|wasm)$
+RewriteCond %{REQUEST_FILENAME}.br -f
+RewriteRule ^(.*)$ $1.br [L]
+
+# Keep mod_deflate from compressing the already-compressed .br body again. This has to match
+# the rewritten .br request, since variables set before an .htaccess rewrite get a REDIRECT_ prefix.
+RewriteRule \.br$ - [E=no-gzip:1]
+
+# Serve pre-compressed .gz variants when browser supports gzip
+RewriteCond %{HTTP:Accept-Encoding} gzip
+RewriteCond %{REQUEST_URI} !\.(gz|br)$
+RewriteCond %{REQUEST_FILENAME}.gz -f
+RewriteRule ^(.*)$ $1.gz [L]
+
+# Serve exported extensionless routes.
+# 1) /path or /path/ -> /path/index.html when that file exists.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !\.[^/]+$
+RewriteCond %{DOCUMENT_ROOT}/$1/index.html -f
+RewriteRule ^(.+?)/?$ /$1/index.html [L]
+
+# 2) Backward-compatible fallback: /path or /path/ -> /path.html when present.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !\.[^/]+$
+RewriteCond %{DOCUMENT_ROOT}/$1.html -f
+RewriteRule ^(.+?)/?$ /$1.html [L]
+
+RewriteRule ^(.*/__next\.[^/]+)\.__PAGE__\.txt$ /$1/__PAGE__.txt [L]
+
+<FilesMatch "\.framework\.js\.gz$">
+    Header set Content-Type "application/javascript"
+    Header set Content-Encoding "gzip"
+    Header append Vary "Accept-Encoding"
+</FilesMatch>
+
+<FilesMatch "\.data\.gz$">
+    Header set Content-Type "application/octet-stream"
+    Header set Content-Encoding "gzip"
+    Header append Vary "Accept-Encoding"
+</FilesMatch>
+
+<FilesMatch "\.wasm\.gz$">
+    Header set Content-Type "application/wasm"
+    Header set Content-Encoding "gzip"
+    Header append Vary "Accept-Encoding"
+</FilesMatch>
+
+<FilesMatch "\.framework\.js\.br$">
+    Header set Content-Type "application/javascript"
+    Header set Content-Encoding "br"
+    Header append Vary "Accept-Encoding"
+</FilesMatch>
+
+<FilesMatch "\.data\.br$">
+    Header set Content-Type "application/octet-stream"
+    Header set Content-Encoding "br"
+    Header append Vary "Accept-Encoding"
+</FilesMatch>
+
+<FilesMatch "\.wasm\.br$">
+    Header set Content-Type "application/wasm"
+    Header set Content-Encoding "br"
+    Header append Vary "Accept-Encoding"
+</FilesMatch>
+
+# Unity build filenames include the game version, so these assets can be cached
+# for a year without risking that an updated build is hidden behind stale cache.
+<FilesMatch "^RapidPath-[0-9]+(\.[0-9]+)*\.(data|framework\.js|loader\.js|wasm)(\.gz|\.br)?$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+</FilesMatch>

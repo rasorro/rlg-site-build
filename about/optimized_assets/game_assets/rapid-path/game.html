@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
+    <title>Unity Web Player | Project_Vagabond</title>
+    <style>
+      html, body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: #3D3047;
+        cursor: url("/optimized_assets/global_assets/rlg_cursor.png") 0 0, auto;
+      }
+      html.mobile, body.mobile {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        overscroll-behavior: none;
+      }
+      body {
+        position: relative;
+      }
+      #unity-canvas {
+        position: absolute;
+        inset: 0;
+        width: 100% !important;
+        height: 100% !important;
+        display: block;
+        cursor: inherit;
+        /* Customize what is visible while Unity is not actively rendering. */
+        background-color: #3D3047;
+      }
+      #unity-canvas:focus {
+        outline: none;
+      }
+      #unity-error {
+        display: none;
+        position: fixed;
+        inset: auto 1rem 1rem;
+        z-index: 3;
+        padding: 1rem;
+        color: #fff;
+        background: #8b0000;
+        font: 16px sans-serif;
+      }
+      #unity-loading {
+        position: fixed;
+        inset: 0;
+        z-index: 2;
+        display: grid;
+        align-content: center;
+        justify-items: center;
+        gap: 1.25rem;
+        color: #00ff75;
+        background: #3D3047;
+        font: 700 1rem sans-serif;
+      }
+      #unity-loading img {
+        width: min(8rem, 30vw);
+        height: auto;
+      }
+      #unity-progress {
+        width: min(15rem, 70vw);
+        height: 0.75rem;
+        overflow: hidden;
+        border: 2px solid #111;
+        border-radius: 9999px;
+        background: #252433;
+      }
+      #unity-progress-bar {
+        width: 0;
+        height: 100%;
+        background: #00ff75;
+        transition: width 150ms linear;
+      }
+      canvas.mobile {
+        height: 100vh !important;
+        height: 100dvh !important;
+        touch-action: none;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="unity-canvas" tabindex="0"></canvas>
+    <div id="unity-loading" role="status" aria-live="polite">
+      <img src="/optimized_assets/global_assets/rlg_logo_256.webp" alt="Reaction Lab Games">
+      <span>Loading Rapid Path...</span>
+      <div id="unity-progress" aria-hidden="true"><div id="unity-progress-bar"></div></div>
+    </div>
+    <div id="unity-error" role="alert" aria-live="assertive"></div>
+    <script>
+      var canvas = document.querySelector("#unity-canvas");
+      var resizeFocusTimer = null;
+      var unityInstance = null;
+      // Keep Retina sharpness without rendering 9–16 pixels per CSS pixel on
+      // high-density devices. Standard and 2x displays retain native resolution.
+      function gamePixelRatio() {
+        return Math.min(window.devicePixelRatio || 1, 2);
+      }
+      function watchGamePixelRatio() {
+        unityInstance.Module.devicePixelRatio = gamePixelRatio();
+        // Moving between monitors or zooming can change DPI without resizing
+        // the iframe. Re-arm against the new ratio after each change.
+        matchMedia("(resolution: " + window.devicePixelRatio + "dppx)")
+          .addEventListener("change", watchGamePixelRatio, { once: true });
+      }
+      var buildVersion = new URLSearchParams(window.location.search).get("v") || "1.0.5";
+      var buildDirectory = new URLSearchParams(window.location.search).get("build") || "Build/RapidPath-1.0.5/Build";
+      var buildFileName = new URLSearchParams(window.location.search).get("file") || "RapidPath-1.0.5";
+
+      function versionedBuildUrl(filename) {
+        return buildDirectory + "/" + filename + "?v=" + encodeURIComponent(buildVersion);
+      }
+
+      function focusGameCanvas() {
+        try {
+          window.focus();
+          canvas.focus({ preventScroll: true });
+        } catch (e) {
+          canvas.focus();
+        }
+      }
+
+      function reportGameError() {
+        window.parent.postMessage({ type: "RLG_GAME_ERROR" }, window.location.origin);
+      }
+
+      window.addEventListener("message", function (event) {
+        if (event.origin !== window.location.origin) {
+          return;
+        }
+
+        if (event.data && event.data.type === "RLG_FOCUS_GAME") {
+          focusGameCanvas();
+        } else if (event.source === window.parent && event.data && event.data.type === "RLG_VIEWPORT_CHANGED") {
+          if (unityInstance) unityInstance.Module.devicePixelRatio = gamePixelRatio();
+        }
+      });
+
+      window.addEventListener("load", function () {
+        setTimeout(focusGameCanvas, 50);
+      });
+
+      // Some browsers briefly drop focus during resize/orientation changes.
+      window.addEventListener("resize", function () {
+        // Unity reads this setting when matching its render target to the canvas.
+        if (unityInstance) unityInstance.Module.devicePixelRatio = gamePixelRatio();
+        if (resizeFocusTimer) {
+          clearTimeout(resizeFocusTimer);
+        }
+        resizeFocusTimer = setTimeout(focusGameCanvas, 120);
+      });
+
+      document.addEventListener("visibilitychange", function () {
+        if (!document.hidden) {
+          setTimeout(focusGameCanvas, 50);
+        }
+      });
+
+      var isTouchDevice = matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 0;
+      if (isTouchDevice) {
+        document.documentElement.classList.add("mobile");
+        document.body.classList.add("mobile");
+        canvas.classList.add("mobile");
+        canvas.style.width = "100%";
+        canvas.style.height = "100%";
+        canvas.style.position = "fixed";
+        document.body.style.textAlign = "left";
+      }
+
+      var loaderScript = document.createElement("script");
+      loaderScript.src = versionedBuildUrl(buildFileName + ".loader.js");
+      loaderScript.onload = function () {
+        createUnityInstance(canvas, {
+          arguments: [],
+          dataUrl: versionedBuildUrl(buildFileName + ".data"),
+          frameworkUrl: versionedBuildUrl(buildFileName + ".framework.js"),
+          codeUrl: versionedBuildUrl(buildFileName + ".wasm"),
+          streamingAssetsUrl: "StreamingAssets",
+          companyName: "Reaction Lab LLC",
+          productName: "Project_Vagabond",
+          productVersion: buildVersion,
+          devicePixelRatio: gamePixelRatio(),
+        }, function (progress) {
+          document.querySelector("#unity-progress-bar").style.width = Math.round(progress * 100) + "%";
+        }).then(function (instance) {
+          unityInstance = instance;
+          watchGamePixelRatio();
+          document.querySelector("#unity-loading").style.display = "none";
+          window.parent.postMessage({ type: "RLG_GAME_READY" }, window.location.origin);
+          focusGameCanvas();
+        }).catch(function (error) {
+          console.error("Rapid-Path failed to start:", error);
+          document.querySelector("#unity-loading").style.display = "none";
+          var errorMessage = document.querySelector("#unity-error");
+          errorMessage.textContent = "The game could not be loaded. Please refresh the page and try again.";
+          errorMessage.style.display = "block";
+          reportGameError();
+        });
+      };
+      loaderScript.onerror = function () {
+        console.error("Unable to load Unity loader for build " + buildVersion);
+        document.querySelector("#unity-loading").style.display = "none";
+        var errorMessage = document.querySelector("#unity-error");
+        errorMessage.textContent = "The game could not be loaded. Please refresh the page and try again.";
+        errorMessage.style.display = "block";
+        reportGameError();
+      };
+      document.body.appendChild(loaderScript);
+    </script>
+  </body>
+</html>
