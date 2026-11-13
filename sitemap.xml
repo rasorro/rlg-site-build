@@ -2,55 +2,31 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>https://www.reactionlabgames.com/</loc>
-<<<<<<< HEAD
-=======
-<lastmod>2026-11-11T20:57:56.743Z</lastmod>
->>>>>>> a5d2d7ff1180ae08b185b4f87b27549c7e549204
 <changefreq>weekly</changefreq>
 <priority>1</priority>
 </url>
 <url>
 <loc>https://www.reactionlabgames.com/rapid-path/</loc>
-<<<<<<< HEAD
-=======
-<lastmod>2026-11-11T20:57:56.744Z</lastmod>
->>>>>>> a5d2d7ff1180ae08b185b4f87b27549c7e549204
 <changefreq>weekly</changefreq>
 <priority>0.9</priority>
 </url>
 <url>
 <loc>https://www.reactionlabgames.com/about/</loc>
-<<<<<<< HEAD
-=======
-<lastmod>2026-11-11T20:57:56.744Z</lastmod>
->>>>>>> a5d2d7ff1180ae08b185b4f87b27549c7e549204
 <changefreq>monthly</changefreq>
 <priority>0.7</priority>
 </url>
 <url>
 <loc>https://www.reactionlabgames.com/contact/</loc>
-<<<<<<< HEAD
-=======
-<lastmod>2026-11-11T20:57:56.744Z</lastmod>
->>>>>>> a5d2d7ff1180ae08b185b4f87b27549c7e549204
 <changefreq>monthly</changefreq>
 <priority>0.7</priority>
 </url>
 <url>
 <loc>https://www.reactionlabgames.com/stickman-skydive/</loc>
-<<<<<<< HEAD
-=======
-<lastmod>2026-11-11T20:57:56.744Z</lastmod>
->>>>>>> a5d2d7ff1180ae08b185b4f87b27549c7e549204
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 <url>
 <loc>https://www.reactionlabgames.com/swerve/</loc>
-<<<<<<< HEAD
-=======
-<lastmod>2026-11-11T20:57:56.744Z</lastmod>
->>>>>>> a5d2d7ff1180ae08b185b4f87b27549c7e549204
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
