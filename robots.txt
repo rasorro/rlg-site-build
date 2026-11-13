@@ -1,7 +1,9 @@
 User-Agent: *
 Allow: /
 Disallow: /*.html$
-Disallow: /optimized_assets/
+Disallow: /optimized_assets/game_assets/*/game.html
+Disallow: /optimized_assets/game_assets/*/Build/
+Disallow: /optimized_assets/game_assets/*/StreamingAssets/
 Disallow: /original_assets/
 Disallow: /api/
 
