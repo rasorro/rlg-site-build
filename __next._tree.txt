@@ -1,5 +1,5 @@
-:HL["/_next/static/chunks/0a7-d41hj3h-e.css","style"]
+:HL["/_next/static/chunks/1z2-mxzsw_3pd.css","style"]
 :HL["/_next/static/media/d8754b3a9c0d6768-s.p.3k508yj8h20y4.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/optimized_assets/global_assets/rlg_background.webp","image"]
 1:[["children",{"s":"__PAGE__","h":160}]]
-0:{"b":"IgZJmCn8Y-lAPWwweyVtu","t":{"t":{"s":"","h":80,"c":"$Q1"}}}
+0:{"b":"B9BBGBL1K8gxYSKBxrIyg","t":{"t":{"s":"","h":80,"c":"$Q1"}}}
